@@ -5,4 +5,4 @@ Prime Number Conjectures
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17685922.svg)](https://doi.org/10.5281/zenodo.17685922)
