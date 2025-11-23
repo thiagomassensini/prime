@@ -1,0 +1,22 @@
+{
+  "title": "Prime Number Conjectures",
+  "description": "A repository dedicated to prime number conjectures and related mathematical research",
+  "creators": [
+    {
+      "name": "Motta, Thiago",
+      "affiliation": "",
+      "orcid": ""
+    }
+  ],
+  "license": {
+    "id": "MIT"
+  },
+  "keywords": [
+    "prime numbers",
+    "conjectures",
+    "mathematics",
+    "number theory"
+  ],
+  "upload_type": "software",
+  "access_right": "open"
+}
