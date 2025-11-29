@@ -1,8 +1,191 @@
-# prime
-Prime Number Conjectures
+# 2-Adic Thermodynamics of Prime Numbers
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17759739.svg)](https://doi.org/10.5281/zenodo.17759739)
+
+A novel framework connecting binary structure, statistical mechanics, and prime number theory.
+
+## Overview
+
+This project presents a complete theory linking:
+
+- **Binary operations (XOR)** → Classification of primes into families
+- **2-adic valuation** → Stratification by trailing zeros
+- **Boltzmann statistics** → Thermodynamic interpretation
+- **Hardy-Littlewood** → Emergent connection (99.9% accuracy)
+
+## Key Results
+
+### Theorem: 2-Adic Stratification of Odd Primes
+
+Every odd prime P belongs to exactly one of three disjoint families:
+
+| Family | Condition | Signature (T, K) |
+|--------|-----------|------------------|
+| **C_twin** | (P, P+2) are twins | K = 2^{T+1} - 2 |
+| **C_≥2** | Non-twin, v₂(P-1) ≥ 2 | K = 2 |
+| **C_T=1** | Non-twin, v₂(P-1) = 1 | K = 2^m - 2, m ≥ 3 |
+
+Where:
+- T = v₂(P+1) for twins, v₂(P-1) otherwise (trailing zeros = 2-adic valuation)
+- K = P ⊕ (P+2) for twins, (P-1) ⊕ (P+1) otherwise (XOR signature)
+
+**This is a proven theorem, not a conjecture.**
+
+### Empirical Discovery: Boltzmann Distribution
+
+The distribution of T-values follows:
+
+```
+P(T = k) = 2^{-k}
+```
+
+This is exactly a **Boltzmann distribution** with:
+- Energy levels: E_k = k · ε
+- Temperature: kT = 1/ln(2) ≈ 1.44
+
+Verified with 0.05% error on 43M twin primes.
+
+### Emergent Connection: Hardy-Littlewood
+
+The thermodynamic framework reproduces Hardy-Littlewood:
+
+```
+kT(p) = ln²(p) / (2C₂) - 20
+```
+
+| Parameter | Theoretical | Observed | Accuracy |
+|-----------|-------------|----------|----------|
+| Slope | 0.7575 | 0.7566 | 99.9% |
+| R² | - | 0.9997 | - |
+
+**We arrived at Hardy-Littlewood from below, not from above.**
+
+## The Hierarchy
+
+```
+                     BITS (0 and 1)
+                          │
+            ┌─────────────┴─────────────┐
+            │                           │
+            ▼                           ▼
+      v₂(p+1) = k                  p mod 30
+            │                           │
+            ▼                           ▼
+      P(k) = 2^{-k}             class ∈ {11,17,29}
+      kT = 1/ln(2)                      │
+            │                           ▼
+            │                    gap_min(c₁→c₂)
+            │                           │
+            └───────────┬───────────────┘
+                        │
+                        ▼
+          P(g) ∝ exp(-(g-gap_min)/kT(p))
+                        │
+                        ▼
+      ┌─────────────────┴─────────────────┐
+      │                                   │
+      ▼                                   ▼
+ PRIMES (|H|=1)                    TWINS (|H|=2)
+ kT ~ ln(p)                        kT ~ ln²(p)/(2C₂)
+ R² = 0.9999                       R² = 0.9997
+      │                                   │
+      └─────────────────┬─────────────────┘
+                        │
+                        ▼
+           GENERAL LAW: kT_H = (ln p)^|H| / C_H
+                        │
+                        ▼
+               HARDY-LITTLEWOOD
+```
+
+## Papers
+
+### Published
+
+1. **2-Adic Stratification of Odd Primes via XOR Signatures**
+   - DOI: [10.5281/zenodo.17759739](https://doi.org/10.5281/zenodo.17759739)
+   - Proves the three-family classification theorem
+
+### In Preparation
+
+2. **Thermodynamics of Prime Numbers: From Boltzmann to Hardy-Littlewood**
+3. **2-Adic L-Functions and Correlations with Riemann Zeros**
+4. **Fibonacci as Attractor for Sophie Germain Primes**
+
+## Key Equations
+
+### XOR Signature for Twin Primes
+```
+K = P ⊕ (P+2) = 2^{T+1} - 2
+```
+
+### Boltzmann Distribution
+```
+P(T = k) = 2^{-k} = e^{-k·ln(2)} = e^{-βE_k}
+```
+
+### Gap Distribution
+```
+P(g | H, p) = (1/kT_H(p)) × exp(-(g - gap_min) / kT_H(p))
+```
+
+### Temperature Scaling Law
+```
+kT_H(p) = (ln p)^|H| / C_H
+```
+
+### Twin Prime Temperature
+```
+kT_twin(p) = ln²(p) / (2C₂) ≈ 0.757 × ln²(p)
+```
+
+## The Fundamental Constant
+
+```
+ln(2) connects: Bits ↔ Shannon ↔ Boltzmann ↔ Number Theory
+```
+
+## Repository Structure
+
+```
+prime/
+├── README.md                 # Project overview (this file)
+├── MANUAL.md                 # Technical documentation
+├── LICENSE                   # MIT License
+│
+├── papers/
+│   └── 2adic_stratification_primes.pdf
+│
+├── src/
+│   └── thermodynamics.cpp    # Main C++ implementation
+│
+└── data/                     # (optional) Sample outputs
+    └── sample_output.csv
+```
+
+## Author
+
+**Thiago Fernandes Motta Massensini Silva**  
+📧 thiago@massensini.com.br
+
+## Citation
+
+```bibtex
+@software{massensini_2adic_2025,
+  author       = {Massensini Silva, Thiago Fernandes Motta},
+  title        = {2-Adic Stratification of Odd Primes via XOR Signatures},
+  year         = 2025,
+  publisher    = {Zenodo},
+  version      = {v1.0.1},
+  doi          = {10.5281/zenodo.17759739},
+  url          = {https://doi.org/10.5281/zenodo.17759739}
+}
+```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17685922.svg)](https://doi.org/10.5281/zenodo.17685922)
+---
+
+*"The thermodynamics of primes is Hardy-Littlewood written in the language of Boltzmann."*
