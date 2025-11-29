@@ -1,6 +1,6 @@
 # 2-Adic Thermodynamics of Prime Numbers
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17759739.svg)](https://doi.org/10.5281/zenodo.17759739)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17759738.svg)](https://doi.org/10.5281/zenodo.17759738)
 
 A novel framework connecting binary structure, statistical mechanics, and prime number theory.
 
@@ -45,20 +45,20 @@ This is exactly a **Boltzmann distribution** with:
 
 Verified with 0.05% error on 43M twin primes.
 
-### Emergent Connection: Hardy-Littlewood
+### Independent Discovery: Connection to Hardy-Littlewood
 
-The thermodynamic framework reproduces Hardy-Littlewood:
+The thermodynamic framework was developed **independently**, without prior knowledge of the Hardy-Littlewood conjecture. Only after the empirical analysis revealed the gap distribution pattern did we discover that our results align with Hardy-Littlewood:
 
 ```
 kT(p) = ln²(p) / (2C₂) - 20
 ```
 
-| Parameter | Theoretical | Observed | Accuracy |
-|-----------|-------------|----------|----------|
+| Parameter | H-L Theoretical | Our Empirical | Agreement |
+|-----------|-----------------|---------------|-----------|
 | Slope | 0.7575 | 0.7566 | 99.9% |
 | R² | - | 0.9997 | - |
 
-**We arrived at Hardy-Littlewood from below, not from above.**
+**This independent convergence suggests a deep structural connection between binary/2-adic properties and classical analytic number theory.**
 
 ## The Hierarchy
 
@@ -97,6 +97,19 @@ kT(p) = ln²(p) / (2C₂) - 20
                         ▼
                HARDY-LITTLEWOOD
 ```
+
+## Proven Results vs Empirical Observations
+
+### ✓ Proven (Theorem)
+- **XOR Classification**: Every odd prime belongs to exactly one of three families (C_twin, C_≥2, C_T=1)
+- **XOR-T Relationship**: For twin primes, K = 2^{T+1} - 2
+
+### ◐ Empirical (High confidence, verified on 43M+ primes)
+- **Boltzmann Distribution**: P(T=k) = 2^{-k} for v₂(p+1)
+- **Hardy-Littlewood Connection**: kT ≈ 0.757 × ln²(p) with R² = 0.9997
+
+### ○ Interpretive Framework
+- **Thermodynamic Analogy**: Treating gaps as "energies" - useful model, not physical claim
 
 ## Papers
 
@@ -173,12 +186,11 @@ prime/
 ```bibtex
 @software{massensini_2adic_2025,
   author       = {Massensini Silva, Thiago Fernandes Motta},
-  title        = {2-Adic Stratification of Odd Primes via XOR Signatures},
+  title        = {2-Adic Thermodynamics of Prime Numbers},
   year         = 2025,
   publisher    = {Zenodo},
-  version      = {v1.0.1},
-  doi          = {10.5281/zenodo.17759739},
-  url          = {https://doi.org/10.5281/zenodo.17759739}
+  doi          = {10.5281/zenodo.17759738},
+  url          = {https://doi.org/10.5281/zenodo.17759738}
 }
 ```
 
