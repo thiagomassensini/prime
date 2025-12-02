@@ -6,9 +6,10 @@
 #include <cstdint>
 
 // ═══════════════════════════════════════════════════════════════════════════
-//                    TERMODINÂMICA DOS PRIMOS v4.1
+//                    TERMODINÂMICA DOS PRIMOS v4.2
 //           Implementação baseada no framework de máxima entropia
-//           Com tracking de convergência por década
+//           Com Miller-Rabin para teste de primalidade
+//           Wheel mod 210 como filtro inicial
 // ═══════════════════════════════════════════════════════════════════════════
 
 // ======================= CONSTANTES FUNDAMENTAIS =======================
@@ -203,60 +204,119 @@ struct Stats {
 
 Q_DECLARE_METATYPE(Stats)
 
-// ======================= SIEVE COM WHEEL MOD 210 =======================
+// ======================= MILLER-RABIN COM WHEEL MOD 210 =======================
 
-class PrimeSieve {
-public:
-    explicit PrimeSieve(uint64_t limit = 10000000) {
-        generateBasePrimes(limit);
+// Multiplicação modular segura para evitar overflow
+static inline uint64_t mulmod(uint64_t a, uint64_t b, uint64_t m) {
+    return static_cast<__uint128_t>(a) * b % m;
+}
+
+// Exponenciação modular: base^exp mod m
+static inline uint64_t powmod(uint64_t base, uint64_t exp, uint64_t m) {
+    uint64_t result = 1;
+    base %= m;
+    while (exp > 0) {
+        if (exp & 1)
+            result = mulmod(result, base, m);
+        exp >>= 1;
+        base = mulmod(base, base, m);
     }
+    return result;
+}
 
-    // Teste otimizado: já assume que n é coprimo com 2,3,5,7 (vem do wheel 210)
-    bool isPrimeFromWheel(uint64_t n) const {
-        // n já passou pelo filtro mod 210, então é coprimo com 2,3,5,7
-        // Só precisa testar divisores >= 11
+// Miller-Rabin: teste de primalidade determinístico para n < 2^64
+// Usa testemunhas que garantem corretude para todo n < 2^64
+class MillerRabin {
+public:
+    // Teste determinístico usando testemunhas específicas
+    // Para n < 2^64, as testemunhas {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}
+    // são suficientes para determinar primalidade com certeza
+    static bool isPrime(uint64_t n) {
+        if (n < 2) return false;
+        if (n == 2 || n == 3) return true;
+        if (n % 2 == 0) return false;
 
-        if (n < 121) return n > 1;  // 121 = 11², menor composto coprimo com 210
+        // Para números pequenos, usar lista de primos conhecidos
+        if (n < 9) return n == 5 || n == 7;
 
-        uint64_t sqrtN = static_cast<uint64_t>(std::sqrt(static_cast<double>(n))) + 1;
+        // Escreve n-1 = 2^r * d onde d é ímpar
+        uint64_t d = n - 1;
+        int r = 0;
+        while ((d & 1) == 0) {
+            d >>= 1;
+            ++r;
+        }
 
-        // m_basePrimes começa em 11 (após 2,3,5,7)
-        for (uint64_t p : m_basePrimes) {
-            if (p > sqrtN) break;
-            if (n % p == 0) return false;
+        // Testemunhas determinísticas para n < 2^64
+        // Fonte: https://miller-rabin.appspot.com/
+        static const uint64_t witnesses[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
+
+        for (uint64_t a : witnesses) {
+            if (a >= n) continue;
+            if (!millerRabinTest(n, d, r, a))
+                return false;
         }
         return true;
     }
 
-    // Teste geral (para casos especiais)
-    bool isPrime(uint64_t n) const {
-        if (n < 2) return false;
-        if (n == 2 || n == 3 || n == 5 || n == 7) return true;
-        if (n % 2 == 0 || n % 3 == 0 || n % 5 == 0 || n % 7 == 0) return false;
-        return isPrimeFromWheel(n);
+    // Teste otimizado: assume que n já passou pelo filtro wheel mod 210
+    // (coprimo com 2, 3, 5, 7)
+    static bool isPrimeFromWheel(uint64_t n) {
+        // n já é coprimo com 2,3,5,7 pelo wheel
+        if (n < 121) return n > 1;  // 121 = 11², menor composto coprimo com 210
+
+        // Escreve n-1 = 2^r * d onde d é ímpar
+        uint64_t d = n - 1;
+        int r = 0;
+        while ((d & 1) == 0) {
+            d >>= 1;
+            ++r;
+        }
+
+        // Para n < 3,317,044,064,679,887,385,961,981 basta testar:
+        // {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}
+        // Como já filtramos por 2,3,5,7, podemos pular esses
+        static const uint64_t witnesses[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
+
+        for (uint64_t a : witnesses) {
+            if (a >= n) continue;
+            if (!millerRabinTest(n, d, r, a))
+                return false;
+        }
+        return true;
     }
 
 private:
-    void generateBasePrimes(uint64_t limit) {
-        std::vector<bool> sieve(limit + 1, true);
-        sieve[0] = sieve[1] = false;
+    // Um round do teste Miller-Rabin
+    static bool millerRabinTest(uint64_t n, uint64_t d, int r, uint64_t a) {
+        uint64_t x = powmod(a, d, n);
 
-        for (uint64_t i = 2; i * i <= limit; ++i) {
-            if (sieve[i]) {
-                for (uint64_t j = i * i; j <= limit; j += i)
-                    sieve[j] = false;
-            }
-        }
+        if (x == 1 || x == n - 1)
+            return true;
 
-        // Só guarda primos >= 11 (coprimos com 210 que são primos)
-        m_basePrimes.reserve(limit / 12);
-        for (uint64_t i = 11; i <= limit; ++i) {
-            if (sieve[i])
-                m_basePrimes.push_back(i);
+        for (int i = 0; i < r - 1; ++i) {
+            x = mulmod(x, x, n);
+            if (x == n - 1)
+                return true;
         }
+        return false;
+    }
+};
+
+// Alias para manter compatibilidade
+class PrimeSieve {
+public:
+    explicit PrimeSieve(uint64_t /*limit*/ = 10000000) {
+        // Miller-Rabin não precisa de pré-computação
     }
 
-    std::vector<uint64_t> m_basePrimes;
+    bool isPrimeFromWheel(uint64_t n) const {
+        return MillerRabin::isPrimeFromWheel(n);
+    }
+
+    bool isPrime(uint64_t n) const {
+        return MillerRabin::isPrime(n);
+    }
 };
 
 // v₂(n) = trailing zeros
@@ -265,7 +325,7 @@ static inline unsigned v2_of(uint64_t x) {
     return __builtin_ctzll(x);
 }
 
-// Wheel iterator mod 210
+// Wheel iterator mod 210 (filtro rápido antes do Miller-Rabin)
 class WheelIterator {
 public:
     WheelIterator(uint64_t start) {
